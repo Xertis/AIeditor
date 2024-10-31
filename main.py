@@ -13,9 +13,10 @@ class MyApp(QtWidgets.QMainWindow):
         self.ai_send_button.clicked.connect(self.ai_send)
 
         self.ai_history.setReadOnly(True)
-        self.selected_text = "No text selected"
+        self.selected_text = ""
 
         self.ai = AI()
+        self.ai_mode = self.ai.SUMMARING
         
         self.ai_chat_context = []
         self.main_text.selectionChanged.connect(self.select_text)
@@ -32,24 +33,49 @@ class MyApp(QtWidgets.QMainWindow):
         )
         
         if file_name:
-
             with open(file_name, 'r', encoding='utf-8') as file:
                 text = file.read()
                 self.main_text.setPlainText(text)
 
-    def ai_send(self): 
-        request = f"[👤] {self.ai_request.toPlainText()}"
-        out = f"[🤖] {self.ai.summaring(self.selected_text)}" 
-        self.ai_chat_context.append(request)
-        self.ai_chat_context.append(out)
-        self.ai_history.setPlainText('\n'.join(self.ai_chat_context)) 
-        self.ai_request.setPlainText('')
-        
-        cursor = QtGui.QTextCursor(self.ai_history.document())
-        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
-        self.ai_history.setTextCursor(cursor)
-        self.ai_history.ensureCursorVisible()
+    def ai_analysis(self):
+        out = False
+        if self.ai_mode == self.ai.QA:
+            if len(self.ai_request.toPlainText()) == 0:
+                return False
+            if len(self.main_text.toPlainText()) == 0:
+                return False
+            
+            out = self.ai.question_answering(self.ai_request.toPlainText(), self.main_text.toPlainText())
+        elif self.ai_mode == self.ai.SUMMARING:
+            if len(self.selected_text) == 0:
+                return False
+            
+            try:
+                out = self.ai.summaring(self.selected_text, int(self.ai_request.toPlainText()))
+            except (ValueError) as e:
+                out = self.ai.summaring(self.selected_text)
 
+        return f"[🤖] {out}"
+
+    def add_to_history(self, *texts):
+        for text in texts:
+            self.ai_chat_context.append(text)
+        self.ai_history.setPlainText('\n'.join(self.ai_chat_context))
+
+    def move_cursor_down(self, t):
+        cursor = QtGui.QTextCursor(t.document())
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+        t.setTextCursor(cursor)
+
+    def ai_send(self): 
+
+        out = self.ai_analysis()
+        if out:
+
+            request = f"[👤] {self.ai_request.toPlainText()}"
+            self.add_to_history(request, out)
+            self.ai_request.setPlainText('')
+            self.move_cursor_down(self.ai_history)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

@@ -9,26 +9,23 @@ from sumy.utils import get_stop_words
 
 class AI:
     def __init__(self) -> None:
-        self.summary = pipeline("summarization")
-        self.question_answer = pipeline('question-answering', model="deepset/roberta-base-squad2", tokenizer="deepset/roberta-base-squad2")
+        self.question_answer = pipeline('question-answering', model="timpal0l/mdeberta-v3-base-squad2")
         self.translator = Translator()
         self.summary_conf = {'l': "russian", 
-                             'c': 3,
+                             'c': 1,
                              's': Stemmer("russian"),
                              'w': get_stop_words("russian")}
+        
+        self.SUMMARING = "summaring"
+        self.QA = "question_answering"
 
-
-    def __translate__(self, text, tlang):
-        translated = self.translator.translate(text=text, dest=tlang)
-        return translated.text
-
-    def summaring(self, text):
+    def summaring(self, text, sentences_count=1):
         parser = PlaintextParser.from_string(text, Tokenizer(self.summary_conf['l'])) 
         summarizer = LsaSummarizer(self.summary_conf['s']) 
         summarizer.stop_words = self.summary_conf['w'] 
-        
+        print(sentences_count)
         summary_sentences = []
-        for sentence in summarizer(parser.document, self.summary_conf['c']): 
+        for sentence in summarizer(parser.document, sentences_count): 
             summary_sentences.append(str(sentence))
         
         return " ".join(summary_sentences)
@@ -37,10 +34,9 @@ class AI:
         pass
     
     def question_answering(self, quest, context):
-        print(context)
         quest = {
-            "question": self.__translate__(quest, 'en'),
-            "context": self.__translate__(context, 'en')
+            "question": quest,
+            "context": context
         }
         out = self.question_answer(quest)
-        return self.__translate__(out['answer'], 'ru')
+        return out['answer']

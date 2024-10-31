@@ -55,7 +55,7 @@
        <x>0</x>
        <y>20</y>
        <width>231</width>
-       <height>331</height>
+       <height>341</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="ai_v_layout">
