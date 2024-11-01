@@ -30,3 +30,27 @@ class DB:
         """
         files = self.session.query(recent_files).all()
         return files
+    
+    def add_file(self, path: str) -> None:
+        """
+        Добавляет новый файл в дб
+        """
+        self.session.add(recent_files(path=path))
+        self.session.commit()
+
+    def delete_file(self, id=None, path=None) -> None:
+        """
+        Удаляет файл из дб по id/path\n
+        Если id != None, удаляет по айди\n
+        Иначе если path != None, удаляет по пути
+        """
+        file = None
+
+        if id:
+            file = self.session.query(recent_files).filter(recent_files.id == id).one_or_none()
+        elif path:
+            file = self.session.query(recent_files).filter(recent_files.path == path).one_or_none()
+
+        if file:
+            self.session.delete(file)
+            self.session.commit()

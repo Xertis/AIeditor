@@ -23,15 +23,11 @@ class AI:
         parser = PlaintextParser.from_string(text, Tokenizer(self.summary_conf['l'])) 
         summarizer = LsaSummarizer(self.summary_conf['s']) 
         summarizer.stop_words = self.summary_conf['w'] 
-        print(sentences_count)
         summary_sentences = []
         for sentence in summarizer(parser.document, sentences_count): 
             summary_sentences.append(str(sentence))
         
         return " ".join(summary_sentences)
-    
-    def classification(self, text):
-        pass
     
     def question_answering(self, quest, context):
         quest = {
