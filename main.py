@@ -22,7 +22,9 @@ class MyApp(QtWidgets.QMainWindow):
         self.main_text.selectionChanged.connect(self.select_text)
 
         db = DB()
-        print(db.get_latest_file().id)
+        fs = db.get_all_files()
+        for f in fs:
+            print(f.id, f.path)
 
     def select_text(self):
         self.selected_text = self.main_text.textCursor().selectedText()
