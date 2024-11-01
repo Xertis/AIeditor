@@ -2,7 +2,7 @@ import sys
 from PyQt6 import QtWidgets, uic
 from PyQt6 import QtWidgets, QtGui
 from src.ai_requests import AI
-
+from src.sql.db_api import DB
 
 class MyApp(QtWidgets.QMainWindow):
     def __init__(self):
@@ -20,6 +20,9 @@ class MyApp(QtWidgets.QMainWindow):
         
         self.ai_chat_context = []
         self.main_text.selectionChanged.connect(self.select_text)
+
+        db = DB()
+        print(db.get_latest_file().id)
 
     def select_text(self):
         self.selected_text = self.main_text.textCursor().selectedText()
