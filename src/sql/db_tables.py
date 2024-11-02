@@ -10,5 +10,13 @@ class recent_files(Base):
     
     id = Column(Integer, primary_key=True)
     path = Column(Text)
+    id_unsave_data = Column(Integer)
+
+
+class unsave_data(Base):
+    __tablename__ = "unsave_data"
+
+    id = Column(Integer, primary_key=True)
+    text = Column(Text)
 
 Base.metadata.create_all(engine)
