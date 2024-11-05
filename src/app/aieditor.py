@@ -19,11 +19,11 @@ class Aieditor(QtWidgets.QMainWindow):
         self.ai_chat_context = []
         self.if_main_text_data_saved = True
         self.refresh_main_text()
+        self.refresh_ai_history()
         self.load_connections()
 
     def closeEvent(self, event):
         self.handlers.handler_save_data()
-            
 
     def load_connections(self):
         """
@@ -54,8 +54,13 @@ class Aieditor(QtWidgets.QMainWindow):
                 self.main_text.setPlainText(text)
                 file.close()
 
-    def refresh_ai_chat(self):
-        self.db.get_file()
+    def refresh_ai_history(self):
+        file = self.file
+
+        if file and file.id_requests_history:
+            history = self.db.get_requests_history_by_id(file.id_requests_history).text
+            self.ai_history.setPlainText(history)
+            self.ai_chat_context = history.split('\n')
 
     def load_ui(self):
         """
