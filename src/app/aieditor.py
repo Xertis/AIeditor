@@ -3,6 +3,7 @@ from PyQt6 import QtWidgets, uic, QtGui
 from src.ai_requests import AI
 from src.sql.db_api import DB
 from src.app.handlers import Handlers
+from src.sql.db_tables import recent_files
 
 class Aieditor(QtWidgets.QMainWindow):
     def __init__(self):
@@ -14,34 +15,14 @@ class Aieditor(QtWidgets.QMainWindow):
         self.handlers = Handlers(self)
 
         self.ai_mode = self.ai.QA
-        self.file_path = self.db.get_newest_file().path if self.db.get_newest_file() else ''
+        self.file = self.db.get_newest_file() if self.db.get_newest_file() else recent_files()
         self.ai_chat_context = []
         self.if_main_text_data_saved = True
         self.refresh_main_text()
         self.load_connections()
 
     def closeEvent(self, event):
-        """
-        Сохраняет данные из текстового файла, если файл не был сохранён
-        """
-        if not self.if_main_text_data_saved:
-            unsave_data = self.db.add_unsave_data(self.main_text.toPlainText())
-            if unsave_data:
-                f = self.db.add_file(path=self.file_path, 
-                                    id_unsave_data=unsave_data.id)
-                if not f:
-                    f = self.db.get_file_by_path(path=self.file_path)
-                    self.db.delete_unsave_data_by_id(id=f.id_unsave_data)
-                    self.db.update_file_by_id(id=f.id, id_unsave_data=unsave_data.id)
-        else:
-            file = self.db.get_file_by_path(path=self.file_path)
-
-            if file.id_unsave_data:
-                unsave_data = self.db.get_unsave_data_by_id(id=file.id_unsave_data)
-                self.db.delete_unsave_data_by_id(unsave_data.id)
-                print("удаление unsave data")
-            self.db.delete_file(id=file.id)
-            print("удаление файла из бд")
+        self.handlers.handler_save_data()
             
 
     def load_connections(self):
@@ -58,7 +39,7 @@ class Aieditor(QtWidgets.QMainWindow):
         """
         Обновляет main_text данными из файла
         """
-        file_path = self.file_path
+        file_path = self.file.path if self.file.path else ''
 
         if os.path.exists(file_path):
             with open(file_path, 'r', encoding='utf-8') as file:
@@ -72,6 +53,9 @@ class Aieditor(QtWidgets.QMainWindow):
 
                 self.main_text.setPlainText(text)
                 file.close()
+
+    def refresh_ai_chat(self):
+        self.db.get_file()
 
     def load_ui(self):
         """

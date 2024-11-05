@@ -1,4 +1,3 @@
-from googletrans import Translator
 from transformers import pipeline
 
 from sumy.parsers.plaintext import PlaintextParser
@@ -10,7 +9,6 @@ from sumy.utils import get_stop_words
 class AI:
     def __init__(self) -> None:
         self.question_answer = pipeline('question-answering', model="timpal0l/mdeberta-v3-base-squad2")
-        self.translator = Translator()
         self.summary_conf = {'l': "russian", 
                              'c': 1,
                              's': Stemmer("russian"),

@@ -1,8 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from constants import DB_PATH
-from src.sql.db_tables import recent_files, unsave_data
+from src.sql.db_tables import recent_files, unsave_data, requests_history
 from typing import List
+from datetime import datetime as dt
+from os import path as op
 
 engine = create_engine(DB_PATH)
 
@@ -14,7 +16,8 @@ class DB:
         """
         Берёт самый новый сохранённый файл из базы
         """
-        file = self.session.query(recent_files).order_by(recent_files.id.desc()).first()
+        file = self.session.query(recent_files).order_by \
+            (recent_files.id.desc()).first()
         return file
     
     def get_oldest_file(self) -> recent_files:
@@ -30,6 +33,19 @@ class DB:
         """
         file = self.session.query(recent_files).filter(recent_files.path == path).one_or_none()
         return file
+
+    def get_file(self, path: str, time_create: dt = None, time_edit: dt = None) -> recent_files:
+        """ 
+        Берёт файл из бд
+        """
+        file = self.session.query(recent_files).filter( \
+            recent_files.path == path,                   \
+            recent_files.time_create == time_create,     \
+            recent_files.time_edit == time_edit
+            ).one_or_none()
+
+        return file
+
     
     def get_all_files(self) -> List[recent_files]:
         """
@@ -43,7 +59,9 @@ class DB:
         Добавляет новый файл в дб
         """
         if not self.get_file_by_path(path=path):
-            file = recent_files(path=path, id_unsave_data=id_unsave_data)
+            file = recent_files(path=path, id_unsave_data=id_unsave_data, \
+                                time_create=dt.fromtimestamp(op.getctime(path)), \
+                                time_edit=dt.fromtimestamp(op.getmtime(path)))
             self.session.add(file)
             self.session.commit()
             return file
@@ -118,6 +136,34 @@ class DB:
         """
         data = self.session.query(unsave_data).filter(unsave_data.id == id).one_or_none()
         return data
+    
+    def add_requests_history(self, text) -> requests_history:
+        """
+        Добавляет историю переписки с AI в бд
+        """
+        data = requests_history(text=text)
+        self.session.add(data)
+        self.session.commit()
+        return data
+    
+    def get_requests_history_by_id(self, id) -> requests_history:
+        """
+        Берёт историю переписки с AI из бд по id
+        """
+        data = self.session.query(requests_history).filter(requests_history.id == id).one_or_none()
+        return data
+    
+    def delete_requests_history_by_id(self, id):
+        """
+        Удаляет историю переписки с AI из бд
+        """
+
+        data = self.session.query(requests_history).filter(requests_history.id == id).one_or_none()
+
+        if data:
+            self.session.delete(data)
+            self.session.commit()
+
 
     def session_close(self) -> None:
         """
