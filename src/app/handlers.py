@@ -3,7 +3,6 @@ from datetime import datetime as dt
 from os import path as op
 
 class Handlers:
-
     def __init__(self, app):
         self.app = app
 
@@ -58,18 +57,22 @@ class Handlers:
         """
         Сохраняет данные из текстового файла, если файл не был сохранён
         """
+        file = self.app.file
+        file.time_edit = dt.fromtimestamp(op.getmtime(file.path))
         if not self.app.if_main_text_data_saved:
-            unsave_data = self.app.db.add_unsave_data(self.app.main_text.toPlainText())
-            requests_history = self.app.db.add_requests_history(self.app.ai_history.toPlainText())
+            if not file.id_unsave_data:
+                unsave_data = self.app.db.add_unsave_data(self.app.main_text.toPlainText())
+                requests_history = self.app.db.add_requests_history(self.app.ai_history.toPlainText())
 
-            self.app.file.id_unsave_data = unsave_data.id
-            self.app.file.id_requests_history = requests_history.id
+                file.id_unsave_data = unsave_data.id
+                file.id_requests_history = requests_history.id
+            else:
+                unsave_data = self.app.db.get_unsave_data_by_id(self.app.file.id_unsave_data)
+                requests_history = self.app.db.get_requests_history_by_id(self.app.file.id_requests_history)
 
-            self.app.db.session.add(self.app.file)
-            self.app.db.session.commit()
+                unsave_data.text = self.app.main_text.toPlainText()
+                requests_history.text = self.app.ai_history.toPlainText()
         else:
-            file = self.app.db.get_file_by_path(path=self.app.file.path)
-            
             if file:
                 if file.id_unsave_data:
                     self.app.db.delete_unsave_data_by_id(file.id_unsave_data)
@@ -79,6 +82,8 @@ class Handlers:
                     print("истории переписки из бд")
                 self.app.db.delete_file(id=file.id)
                 print("удаление файла из бд")
+        self.app.db.session.add(file)
+        self.app.db.session.commit()
 
     def handler_ai_send(self):
         """
