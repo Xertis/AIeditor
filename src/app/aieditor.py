@@ -53,6 +53,8 @@ class Aieditor(QtWidgets.QMainWindow):
 
                 self.main_text.setPlainText(text)
                 file.close()
+        else:
+            self.main_text.setPlainText('')
 
     def refresh_ai_history(self):
         file = self.file
@@ -61,6 +63,9 @@ class Aieditor(QtWidgets.QMainWindow):
             history = self.db.get_requests_history_by_id(file.id_requests_history).text
             self.ai_history.setPlainText(history)
             self.ai_chat_context = history.split('\n')
+        else:
+            self.ai_history.setPlainText('')
+            self.ai_chat_context.clear()
 
     def load_ui(self):
         """

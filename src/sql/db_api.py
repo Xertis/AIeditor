@@ -40,7 +40,7 @@ class DB:
         """
         file = self.session.query(recent_files).filter( \
             recent_files.path == path,                   \
-            recent_files.time_create == time_create,     \
+            recent_files.time_create == time_create,      \
             recent_files.time_edit == time_edit
             ).one_or_none()
 

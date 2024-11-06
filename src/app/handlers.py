@@ -1,6 +1,7 @@
 from PyQt6 import QtWidgets
 from datetime import datetime as dt
 from os import path as op
+from src.sql.db_tables import recent_files
 
 class Handlers:
     def __init__(self, app):
@@ -30,15 +31,18 @@ class Handlers:
         )
         time_create = dt.fromtimestamp(op.getctime(file_path))
         time_edit = dt.fromtimestamp(op.getmtime(file_path))
+        self.handler_save_data()
         file = self.app.db.get_file(path=file_path, time_create=time_create, time_edit=time_edit)
         if file:
             self.app.file = file
         else:
+            self.app.file = recent_files()
             self.app.file.path = file_path
             self.app.file.time_create = dt.fromtimestamp(op.getctime(file_path))
             self.app.file.time_edit = dt.fromtimestamp(op.getmtime(file_path))
 
         self.app.refresh_main_text()
+        self.app.refresh_ai_history()
 
     def handler_save_file(self):
         """
@@ -58,6 +62,9 @@ class Handlers:
         Сохраняет данные из текстового файла, если файл не был сохранён
         """
         file = self.app.file
+        if file.path is None:
+            return
+
         file.time_edit = dt.fromtimestamp(op.getmtime(file.path))
         if not self.app.if_main_text_data_saved:
             if not file.id_unsave_data:
@@ -82,6 +89,8 @@ class Handlers:
                     print("истории переписки из бд")
                 self.app.db.delete_file(id=file.id)
                 print("удаление файла из бд")
+                self.app.db.session.commit()
+                return 
         self.app.db.session.add(file)
         self.app.db.session.commit()
 
