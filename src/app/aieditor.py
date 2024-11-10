@@ -15,7 +15,7 @@ class Aieditor(QtWidgets.QMainWindow):
         self.handlers = Handlers(self)
 
         self.ai_mode = self.ai.QA
-        self.file = self.db.get_newest_file() if self.db.get_newest_file() else recent_files()
+        self.file = self.db.files.get_newest() if self.db.files.get_newest() else recent_files()
         self.ai_chat_context = []
         self.if_main_text_data_saved = True
         self.refresh_main_text()
@@ -44,9 +44,9 @@ class Aieditor(QtWidgets.QMainWindow):
         if os.path.exists(file_path):
             with open(file_path, 'r', encoding='utf-8') as file:
                 text = file.read()
-                f = self.db.get_file_by_path(path=file_path)
+                f = self.db.files.get_by_path(path=file_path)
                 if f:
-                    unsave_data = self.db.get_unsave_data_by_id(id=f.id_unsave_data)
+                    unsave_data = self.db.unsave.get_by_id(id=f.id_unsave_data)
                     if unsave_data:
                         text = unsave_data.text
                         self.if_main_text_data_saved = False
@@ -60,7 +60,7 @@ class Aieditor(QtWidgets.QMainWindow):
         file = self.file
 
         if file and file.id_requests_history:
-            history = self.db.get_requests_history_by_id(file.id_requests_history).text
+            history = self.db.requests.get_by_id(file.id_requests_history).text
             self.ai_history.setPlainText(history)
             self.ai_chat_context = history.split('\n')
         else:

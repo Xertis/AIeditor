@@ -3,6 +3,7 @@ from datetime import datetime as dt
 from os import path as op
 from src.sql.db_tables import recent_files
 
+
 class Handlers:
     def __init__(self, app):
         self.app = app
@@ -32,7 +33,7 @@ class Handlers:
         time_create = dt.fromtimestamp(op.getctime(file_path))
         time_edit = dt.fromtimestamp(op.getmtime(file_path))
         self.handler_save_data()
-        file = self.app.db.get_file(path=file_path, time_create=time_create, time_edit=time_edit)
+        file = self.app.db.files.get(path=file_path, time_create=time_create, time_edit=time_edit)
         if file:
             self.app.file = file
         else:
@@ -68,26 +69,26 @@ class Handlers:
         file.time_edit = dt.fromtimestamp(op.getmtime(file.path))
         if not self.app.if_main_text_data_saved:
             if not file.id_unsave_data:
-                unsave_data = self.app.db.add_unsave_data(self.app.main_text.toPlainText())
-                requests_history = self.app.db.add_requests_history(self.app.ai_history.toPlainText())
+                unsave_data = self.app.db.unsave.add(self.app.main_text.toPlainText())
+                requests_history = self.app.db.requests.add(self.app.ai_history.toPlainText())
 
                 file.id_unsave_data = unsave_data.id
                 file.id_requests_history = requests_history.id
             else:
-                unsave_data = self.app.db.get_unsave_data_by_id(self.app.file.id_unsave_data)
-                requests_history = self.app.db.get_requests_history_by_id(self.app.file.id_requests_history)
+                unsave_data = self.app.db.unsave.get_by_id(self.app.file.id_unsave_data)
+                requests_history = self.app.db.unsave.get_by_id(self.app.file.id_requests_history)
 
                 unsave_data.text = self.app.main_text.toPlainText()
                 requests_history.text = self.app.ai_history.toPlainText()
         else:
             if file:
                 if file.id_unsave_data:
-                    self.app.db.delete_unsave_data_by_id(file.id_unsave_data)
+                    self.app.db.unsave.delete_by_id(file.id_unsave_data)
                     print("удаление unsave data")
                 if file.id_requests_history:
-                    self.app.db.delete_requests_history_by_id(file.id_requests_history)
+                    self.app.db.requests.delete_by_id(file.id_requests_history)
                     print("истории переписки из бд")
-                self.app.db.delete_file(id=file.id)
+                self.app.db.files.delete(id=file.id)
                 print("удаление файла из бд")
                 self.app.db.session.commit()
                 return 
