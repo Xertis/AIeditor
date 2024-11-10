@@ -30,24 +30,26 @@ class Handlers:
             "",
             "Text Files (*.txt);;All Files (*)"
         )
-        time_create = dt.fromtimestamp(op.getctime(file_path))
-        time_edit = dt.fromtimestamp(op.getmtime(file_path))
-        self.handler_save_data()
-        file = self.app.db.files.get(
-            path=file_path,
-            time_create=time_create,
-            time_edit=time_edit)
-        if file:
-            self.app.file = file
-        else:
-            self.app.file = recent_files()
-            self.app.file.path = file_path
-            self.app.file.time_create = dt.fromtimestamp(
-                op.getctime(file_path))
-            self.app.file.time_edit = dt.fromtimestamp(op.getmtime(file_path))
 
-        self.app.refresh_main_text()
-        self.app.refresh_ai_history()
+        if file_path:
+            time_create = dt.fromtimestamp(op.getctime(file_path))
+            time_edit = dt.fromtimestamp(op.getmtime(file_path))
+            self.handler_save_data()
+            file = self.app.db.files.get(
+                path=file_path,
+                time_create=time_create,
+                time_edit=time_edit)
+            if file:
+                self.app.file = file
+            else:
+                self.app.file = recent_files()
+                self.app.file.path = file_path
+                self.app.file.time_create = dt.fromtimestamp(
+                    op.getctime(file_path))
+                self.app.file.time_edit = dt.fromtimestamp(op.getmtime(file_path))
+
+            self.app.refresh_main_text()
+            self.app.refresh_ai_history()
 
     def handler_save_file(self):
         """

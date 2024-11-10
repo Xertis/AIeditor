@@ -24,19 +24,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="open_file">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>0</y>
-      <width>93</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>open file</string>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="ai_chat">
     <property name="geometry">
      <rect>
@@ -87,19 +74,6 @@
       <string>SEND</string>
      </property>
     </widget>
-   </widget>
-   <widget class="QPushButton" name="save_file">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>30</y>
-      <width>93</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>save file</string>
-    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

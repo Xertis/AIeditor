@@ -1,5 +1,6 @@
 import os
 from PyQt6 import QtWidgets, uic, QtGui
+from PyQt6.QtGui import QAction
 from src.ai_requests import AI
 from src.sql.db_api import DB
 from src.app.handlers import Handlers
@@ -9,6 +10,7 @@ from src.sql.db_tables import recent_files
 class Aieditor(QtWidgets.QMainWindow):
     def __init__(self):
         super(Aieditor, self).__init__()
+        self.toolbar = self.addToolBar("File")
         self.load_ui()
         self.ai = AI()
         self.db = DB()
@@ -33,12 +35,18 @@ class Aieditor(QtWidgets.QMainWindow):
         """
         Подключение всех кнопок к их хендлерам
         """
-        self.open_file.clicked.connect(self.handlers.handler_load_file)
         self.ai_send_button.clicked.connect(self.handlers.handler_ai_send)
         self.main_text.selectionChanged.connect(
             self.handlers.handler_select_text)
         self.main_text.textChanged.connect(self.handlers.handler_text_changed)
-        self.save_file.clicked.connect(self.handlers.handler_save_file)
+
+        open_action = QAction("Open file", self)
+        open_action.triggered.connect(self.handlers.handler_load_file)
+        self.toolbar.addAction(open_action)
+
+        save_action = QAction("Save file", self)
+        save_action.triggered.connect(self.handlers.handler_save_file)
+        self.toolbar.addAction(save_action)
 
     def refresh_main_text(self):
         """
