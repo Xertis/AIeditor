@@ -5,6 +5,7 @@ from src.sql.db_tables import unsave_data
 
 engine = create_engine(DB_PATH)
 
+
 class DB_unsave:
     def __init__(self, session: Session) -> None:
         self.session = session
@@ -22,7 +23,8 @@ class DB_unsave:
         """
         Удаляет несохранённые данные текстового файла из бд
         """
-        data = self.session.query(unsave_data).filter(unsave_data.id == id).one_or_none()
+        data = self.session.query(unsave_data).filter(
+            unsave_data.id == id).one_or_none()
 
         if data:
             self.session.delete(data)
@@ -32,7 +34,8 @@ class DB_unsave:
         """
         Обновляет unsave_data по id
         """
-        data = self.session.query(unsave_data).filter(unsave_data.id == id).one_or_none()
+        data = self.session.query(unsave_data).filter(
+            unsave_data.id == id).one_or_none()
 
         if data:
             data.text = text
@@ -45,5 +48,6 @@ class DB_unsave:
         """
         Берёт несохранённые данные текстового файла из бд по id
         """
-        data = self.session.query(unsave_data).filter(unsave_data.id == id).one_or_none()
+        data = self.session.query(unsave_data).filter(
+            unsave_data.id == id).one_or_none()
         return data

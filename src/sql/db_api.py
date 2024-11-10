@@ -8,6 +8,7 @@ from src.sql.queries.db_unsave import DB_unsave
 
 engine = create_engine(DB_PATH)
 
+
 class DB:
     def __init__(self) -> None:
         self.session = sessionmaker(bind=engine)()

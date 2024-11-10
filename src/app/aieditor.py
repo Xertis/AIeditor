@@ -5,17 +5,19 @@ from src.sql.db_api import DB
 from src.app.handlers import Handlers
 from src.sql.db_tables import recent_files
 
+
 class Aieditor(QtWidgets.QMainWindow):
     def __init__(self):
         super(Aieditor, self).__init__()
         self.load_ui()
         self.ai = AI()
         self.db = DB()
-        
+
         self.handlers = Handlers(self)
 
         self.ai_mode = self.ai.QA
-        self.file = self.db.files.get_newest() if self.db.files.get_newest() else recent_files()
+        self.file = self.db.files.get_newest(
+        ) if self.db.files.get_newest() else recent_files()
         self.ai_chat_context = []
         self.if_main_text_data_saved = True
         self.refresh_main_text()
@@ -31,7 +33,8 @@ class Aieditor(QtWidgets.QMainWindow):
         """
         self.open_file.clicked.connect(self.handlers.handler_load_file)
         self.ai_send_button.clicked.connect(self.handlers.handler_ai_send)
-        self.main_text.selectionChanged.connect(self.handlers.handler_select_text)
+        self.main_text.selectionChanged.connect(
+            self.handlers.handler_select_text)
         self.main_text.textChanged.connect(self.handlers.handler_text_changed)
         self.save_file.clicked.connect(self.handlers.handler_save_file)
 
@@ -85,15 +88,19 @@ class Aieditor(QtWidgets.QMainWindow):
                 return False
             if len(self.main_text.toPlainText()) == 0:
                 return False
-            
-            out = self.ai.question_answering(self.ai_request.toPlainText(), self.main_text.toPlainText())
+
+            out = self.ai.question_answering(
+                self.ai_request.toPlainText(),
+                self.main_text.toPlainText())
         elif self.ai_mode == self.ai.SUMMARING:
             if len(self.selected_text) == 0:
                 return False
-            
+
             try:
-                out = self.ai.summaring(self.selected_text, int(self.ai_request.toPlainText()))
-            except (ValueError) as e:
+                out = self.ai.summaring(
+                    self.selected_text, int(
+                        self.ai_request.toPlainText()))
+            except (ValueError):
                 out = self.ai.summaring(self.selected_text)
 
         return f"[🤖] {out}"
@@ -104,14 +111,14 @@ class Aieditor(QtWidgets.QMainWindow):
         (по факту меняет нейронку, которая щас будет работать)
         """
         request = self.ai_request.toPlainText().strip()
-        
+
         if request.isnumeric():
             self.ai_mode = self.ai.SUMMARING
             return
         if len(request) == 0:
             self.ai_mode = self.ai.SUMMARING
             return
-        
+
         self.ai_mode = self.ai.QA
 
     def add_to_history(self, *texts):
