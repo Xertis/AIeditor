@@ -83,7 +83,7 @@ class Handlers:
             else:
                 unsave_data = self.app.db.unsave.get_by_id(
                     self.app.file.id_unsave_data)
-                requests_history = self.app.db.unsave.get_by_id(
+                requests_history = self.app.db.requests.get_by_id(
                     self.app.file.id_requests_history)
 
                 unsave_data.text = self.app.main_text.toPlainText()

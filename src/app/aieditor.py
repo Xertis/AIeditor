@@ -18,8 +18,10 @@ class Aieditor(QtWidgets.QMainWindow):
         self.ai_mode = self.ai.QA
         self.file = self.db.files.get_newest(
         ) if self.db.files.get_newest() else recent_files()
+
         self.ai_chat_context = []
         self.if_main_text_data_saved = True
+
         self.refresh_main_text()
         self.refresh_ai_history()
         self.load_connections()
