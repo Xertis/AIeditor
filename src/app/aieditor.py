@@ -85,6 +85,7 @@ class Aieditor(QtWidgets.QMainWindow):
         Загрузка настроек интерфейса
         """
         uic.loadUi('main.ui', self)
+        self.setWindowTitle("AIeditor")
         self.ai_history.setReadOnly(True)
         self.selected_text = ""
 

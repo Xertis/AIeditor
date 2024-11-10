@@ -46,7 +46,8 @@ class Handlers:
                 self.app.file.path = file_path
                 self.app.file.time_create = dt.fromtimestamp(
                     op.getctime(file_path))
-                self.app.file.time_edit = dt.fromtimestamp(op.getmtime(file_path))
+                self.app.file.time_edit = dt.fromtimestamp(
+                    op.getmtime(file_path))
 
             self.app.refresh_main_text()
             self.app.refresh_ai_history()
