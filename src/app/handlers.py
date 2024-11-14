@@ -9,20 +9,25 @@ class Handlers:
         self.app = app
 
     def handler_text_changed(self):
-        """
-        Вызывается после каждого изменения файла
-        """
+        """ 
+        Обработчик, вызываемый после каждого изменения текста в
+        файле. Устанавливает флаг, указывающий на то, что данные основного
+        текста не были сохранены. 
+        """ 
         self.app.if_main_text_data_saved = False
 
     def handler_select_text(self):
         """
-        Назначает новое значение выделенного текста в переменную
+        Обработчик, назначающий новое значение выделенного текста в
+        переменную. Сохраняет выделенный текст из основного текстового поля
+        в атрибут приложения. 
         """
         self.app.selected_text = self.app.main_text.textCursor().selectedText()
 
     def handler_load_file(self):
         """
-        Загружает файл по выбранному пути
+        Обработчик для загрузки файла по выбранному пути. Открывает
+        диалог выбора файла и загружает содержимое выбранного файла. 
         """
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self.app,
@@ -54,7 +59,9 @@ class Handlers:
 
     def handler_save_file(self):
         """
-        Сохраняет открытый файл
+        Обработчик для сохранения открытого файла. Если файл уже был
+        загружен, сохраняет его содержимое. В противном случае открывает
+        диалог для сохранения нового файла. 
         """
         file_path = self.app.file.path
 
@@ -68,16 +75,14 @@ class Handlers:
             file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
                 self.app, "Сохранить файл", "",
                 "All Files (*);;Text Files (*.txt)")
-            if not op.exists(file_path):
-                with open(file_path, 'w') as file:
-                    file.write(self.app.main_text.toPlainText())
-            else:
-                QtWidgets.QMessageBox.warning(
-                    self, "Warning", "File is exists.")
+            with open(file_path, 'w') as file:
+                file.write(self.app.main_text.toPlainText())
 
     def handler_save_data(self):
         """
-        Сохраняет данные из текстового файла, если файл не был сохранён
+        Сохраняет метаданные из текстового файла в бд, если файл не был
+        сохранён. Обновляет информацию и сохраняет
+        или удаляет данные в зависимости от состояния. 
         """
         file = self.app.file
         if file.path is None:
@@ -118,7 +123,10 @@ class Handlers:
 
     def handler_ai_send(self):
         """
-        Отправляет в нейронку сообщение пользователя
+        Эта функция переключает режим работы ИИ, выполняет анализ на основе 
+        введенного пользователем текста и сохраняет результат в истории. 
+        После выполнения анализа очищает текстовое поле для нового ввода 
+        и перемещает курсор в области истории.
         """
         self.app.change_ai_mode()
 

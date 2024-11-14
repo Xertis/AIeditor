@@ -29,11 +29,20 @@ class Aieditor(QtWidgets.QMainWindow):
         self.load_connections()
 
     def closeEvent(self, event):
+        """
+        Этот метод вызывается при закрытии приложения. Внутри него
+        происходит сохранение текущих данных и состояния приложения, чтобы
+        при следующем запуске пользователь мог продолжить с того места, где
+        остановился. Это может включать сохранение открытых документов,
+        настроек интерфейса и других пользовательских предпочтений.
+        """
         self.handlers.handler_save_data()
 
     def load_connections(self):
         """
-        Подключение всех кнопок к их хендлерам
+        Метод отвечает за связывание элементов интерфейса, чтобы при нажатии на кнопку
+        выполнялась определенная функция. Например, кнопка "Сохранить" может
+        быть связана с методом, который сохраняет текущие данные.
         """
         self.ai_send_button.clicked.connect(self.handlers.handler_ai_send)
         self.main_text.selectionChanged.connect(
@@ -50,7 +59,8 @@ class Aieditor(QtWidgets.QMainWindow):
 
     def refresh_main_text(self):
         """
-        Обновляет main_text данными из файла
+        Этот метод обновляет текстовое поле в главном интерфейсе
+        приложения, загружая данные из файла или другого источника.
         """
         file_path = self.file.path if self.file.path else ''
 
@@ -70,6 +80,12 @@ class Aieditor(QtWidgets.QMainWindow):
             self.main_text.setPlainText('')
 
     def refresh_ai_history(self):
+        """
+        Метод обновляет историю взаимодействий с искусственным
+        интеллектом. Он может загружать предыдущие запросы и ответы
+        из базы данных или файла, чтобы пользователь мог видеть,
+        какие вопросы он задавал и какие ответы получал.
+        """
         file = self.file
 
         if file and file.id_requests_history:
@@ -82,7 +98,8 @@ class Aieditor(QtWidgets.QMainWindow):
 
     def load_ui(self):
         """
-        Загрузка настроек интерфейса
+        Этот метод отвечает за загрузку настроек пользовательского
+        интерфейса при старте приложения.
         """
         uic.loadUi('main.ui', self)
         self.setWindowTitle("AIeditor")
@@ -91,7 +108,11 @@ class Aieditor(QtWidgets.QMainWindow):
 
     def ai_analysis(self):
         """
-        Анализирует нейронкой текст
+        Метод запускает процесс анализа текста с использованием
+        нейронной сети. Входные
+        данные могут поступать от пользователя, а результат анализа
+        возвращается и
+        отображается в интерфейсе приложения.
         """
         out = False
         if self.ai_mode == self.ai.QA:
@@ -118,8 +139,12 @@ class Aieditor(QtWidgets.QMainWindow):
 
     def change_ai_mode(self):
         """
-        Меняет режим, в котором щас работает ИИ
-        (по факту меняет нейронку, которая щас будет работать)
+        Этот метод позволяет переключать режимы работы
+        искусственного интеллекта. Например, приложение может
+        поддерживать
+        разные режимы, такие как "суммаризация и "QA" этот метод
+        управляет изменением текущего
+        режима в зависимости от потребностей пользователя.
         """
         request = self.ai_request.toPlainText().strip()
 
@@ -134,7 +159,9 @@ class Aieditor(QtWidgets.QMainWindow):
 
     def add_to_history(self, *texts):
         """
-        Добавляет текст в историю диалога с нейронкой
+        Метод добавляет текстовые сообщения в историю диалога с
+        искусственным интеллектом. Это может включать как запросы
+        пользователя, так и ответы ИИ.
         """
         for text in texts:
             self.ai_chat_context.append(text)
@@ -142,7 +169,7 @@ class Aieditor(QtWidgets.QMainWindow):
 
     def move_cursor_down(self, t):
         """
-        Прокручивает до низа менюшку
+        Метод позволяет прокручивать выбранное текстовое поле в самый низ
         """
         cursor = QtGui.QTextCursor(t.document())
         cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
