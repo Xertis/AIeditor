@@ -64,6 +64,16 @@ class Handlers:
                 self.app.if_main_text_data_saved = True
                 file.close()
                 self.handler_save_data()
+        else:
+            file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+                self.app, "Сохранить файл", "",
+                "All Files (*);;Text Files (*.txt)")
+            if not op.exists(file_path):
+                with open(file_path, 'w') as file:
+                    file.write(self.app.main_text.toPlainText())
+            else:
+                QtWidgets.QMessageBox.warning(
+                    self, "Warning", "File is exists.")
 
     def handler_save_data(self):
         """
