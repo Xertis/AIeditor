@@ -40,9 +40,11 @@ class Aieditor(QtWidgets.QMainWindow):
 
     def load_connections(self):
         """
-        Метод отвечает за связывание элементов интерфейса, чтобы при нажатии на кнопку
-        выполнялась определенная функция. Например, кнопка "Сохранить" может
-        быть связана с методом, который сохраняет текущие данные.
+        Метод отвечает за связывание элементов интерфейса,
+        чтобы при нажатии на кнопку выполнялась
+        определенная функция. Например,
+        кнопка "Сохранить" может быть связана с методом,
+        который сохраняет текущие данные.
         """
         self.ai_send_button.clicked.connect(self.handlers.handler_ai_send)
         self.main_text.selectionChanged.connect(
@@ -64,8 +66,13 @@ class Aieditor(QtWidgets.QMainWindow):
         """
         file_path = self.file.path if self.file.path else ''
 
+        if self.file.id_unsave_data:
+            unsave_data = self.db.unsave.get_by_id(self.file.id_unsave_data)
+            self.main_text.setPlainText(unsave_data.text)
+            return
+
         if os.path.exists(file_path):
-            with open(file_path, 'r', encoding='utf-8') as file:
+            with open(file_path, 'r') as file:
                 text = file.read()
                 f = self.db.files.get_by_path(path=file_path)
                 if f:
