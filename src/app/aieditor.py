@@ -1,5 +1,6 @@
 import os
-from PyQt6 import QtWidgets, uic, QtGui
+from PyQt6 import uic, QtGui
+from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction
 from src.ai_requests import AI
 from src.sql.db_api import DB
@@ -7,7 +8,7 @@ from src.app.handlers import Handlers
 from src.sql.db_tables import recent_files
 
 
-class Aieditor(QtWidgets.QMainWindow):
+class Aieditor(QMainWindow):
     def __init__(self):
         super(Aieditor, self).__init__()
         self.toolbar = self.addToolBar("File")
