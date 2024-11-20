@@ -18,8 +18,8 @@ class Aieditor(QtWidgets.QMainWindow):
         self.handlers = Handlers(self)
 
         self.ai_mode = self.ai.QA
-        self.file = self.db.files.get_newest(
-        ) if self.db.files.get_newest() else recent_files()
+        self.file = self.db.files.get_newest()
+        self.file = self.file if self.file else recent_files()
 
         self.ai_chat_context = []
         self.if_main_text_data_saved = True
@@ -31,10 +31,9 @@ class Aieditor(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         """
         Этот метод вызывается при закрытии приложения. Внутри него
-        происходит сохранение текущих данных и состояния приложения, чтобы
+        происходит сохранение текущих данных приложения, чтобы
         при следующем запуске пользователь мог продолжить с того места, где
-        остановился. Это может включать сохранение открытых документов,
-        настроек интерфейса и других пользовательских предпочтений.
+        остановился.
         """
         self.handlers.handler_save_data()
 
@@ -42,9 +41,7 @@ class Aieditor(QtWidgets.QMainWindow):
         """
         Метод отвечает за связывание элементов интерфейса,
         чтобы при нажатии на кнопку выполнялась
-        определенная функция. Например,
-        кнопка "Сохранить" может быть связана с методом,
-        который сохраняет текущие данные.
+        определенная функция.
         """
         self.ai_send_button.clicked.connect(self.handlers.handler_ai_send)
         self.main_text.selectionChanged.connect(
@@ -62,7 +59,7 @@ class Aieditor(QtWidgets.QMainWindow):
     def refresh_main_text(self):
         """
         Этот метод обновляет текстовое поле в главном интерфейсе
-        приложения, загружая данные из файла или другого источника.
+        приложения, загружая данные из файла или бд.
         """
         file_path = self.file.path if self.file.path else ''
 
@@ -147,9 +144,7 @@ class Aieditor(QtWidgets.QMainWindow):
     def change_ai_mode(self):
         """
         Этот метод позволяет переключать режимы работы
-        искусственного интеллекта. Например, приложение может
-        поддерживать
-        разные режимы, такие как "суммаризация и "QA" этот метод
+        искусственного интеллекта, такие как "суммаризация и "QA", этот метод
         управляет изменением текущего
         режима в зависимости от потребностей пользователя.
         """

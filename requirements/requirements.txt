@@ -6,3 +6,4 @@ SQLAlchemy==2.0.29
 sumy==0.11.0
 tokenizers==0.19.1
 transformers==4.44.2
+tensorflow==2.14.0

@@ -117,12 +117,9 @@ class Handlers:
             if file:
                 if file.id_unsave_data:
                     self.app.db.unsave.delete_by_id(file.id_unsave_data)
-                    print("удаление unsave data")
                 if file.id_requests_history:
                     self.app.db.requests.delete_by_id(file.id_requests_history)
-                    print("истории переписки из бд")
                 self.app.db.files.delete(id=file.id)
-                print("удаление файла из бд")
                 self.app.db.session.commit()
                 return
         self.app.db.session.add(file)
@@ -137,7 +134,6 @@ class Handlers:
         """
         self.app.change_ai_mode()
 
-        print(self.app.ai_mode)
         out = self.app.ai_analysis()
 
         if out:
