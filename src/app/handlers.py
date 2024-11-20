@@ -1,4 +1,4 @@
-from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QFileDialog
 from datetime import datetime as dt
 from os import path as op
 from src.sql.db_tables import recent_files
@@ -29,7 +29,7 @@ class Handlers:
         Обработчик для загрузки файла по выбранному пути. Открывает
         диалог выбора файла и загружает содержимое выбранного файла.
         """
-        file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+        file_path, _ = QFileDialog.getOpenFileName(
             self.app,
             "Выберите файл",
             "",
@@ -72,7 +72,7 @@ class Handlers:
                 file.close()
                 self.handler_save_data()
         else:
-            file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+            file_path, _ = QFileDialog.getSaveFileName(
                 self.app, "Сохранить файл", "",
                 "All Files (*);;Text Files (*.txt)")
             if file_path:
