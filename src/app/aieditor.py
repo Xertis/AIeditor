@@ -70,7 +70,7 @@ class Aieditor(QMainWindow):
             return
 
         if os.path.exists(file_path):
-            with open(file_path, 'r') as file:
+            with open(file_path, 'r', encoding='utf-8') as file:
                 text = file.read()
                 f = self.db.files.get_by_path(path=file_path)
                 if f:
@@ -133,11 +133,12 @@ class Aieditor(QMainWindow):
             if len(self.selected_text) == 0:
                 return False
 
-            try:
+            if self.ai_request.toPlainText().isnumeric():
                 out = self.ai.summaring(
-                    self.selected_text, int(
-                        self.ai_request.toPlainText()))
-            except (ValueError):
+                    self.selected_text, 
+                    int(self.ai_request.toPlainText())
+                )
+            else:
                 out = self.ai.summaring(self.selected_text)
 
         return f"[🤖] {out}"
