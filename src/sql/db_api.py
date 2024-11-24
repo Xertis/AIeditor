@@ -16,9 +16,3 @@ class DB:
         self.files = DB_recent_files(self.session)
         self.unsave = DB_unsave(self.session)
         self.requests = DB_requests_history(self.session)
-
-    def session_close(self) -> None:
-        """
-        Закрывает текущую сессию с бд
-        """
-        self.session.close()

@@ -22,7 +22,8 @@ class Aieditor(QMainWindow):
         self.file = self.file if self.file else recent_files()
 
         self.ai_chat_context = []
-        self.if_main_text_data_saved = True
+        self.if_main_text_data_saved = False if \
+            self.file.id_unsave_data else True
 
         self.refresh_main_text()
         self.refresh_ai_history()
@@ -47,6 +48,7 @@ class Aieditor(QMainWindow):
         остановился.
         """
         self.handlers.handler_save_data()
+        self.db.session.close()
 
     def load_connections(self):
         """
