@@ -35,7 +35,6 @@ class Aieditor(QMainWindow):
         интерфейса при старте приложения.
         """
         uic.loadUi('main.ui', self)
-        self.toolbar = self.addToolBar("File")
         self.setWindowTitle("AIeditor")
         self.ai_history.setReadOnly(True)
         self.selected_text = ""
