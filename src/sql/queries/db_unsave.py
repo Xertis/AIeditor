@@ -10,7 +10,7 @@ class DB_unsave:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def add(self, text) -> unsave_data:
+    def add(self, text: str) -> unsave_data:
         """
         Добавляет несохранённые данные текстового файла в бд
         """
@@ -19,7 +19,7 @@ class DB_unsave:
         self.session.commit()
         return data
 
-    def delete_by_id(self, id) -> None:
+    def delete_by_id(self, id: int) -> None:
         """
         Удаляет несохранённые данные текстового файла из бд
         """
@@ -44,7 +44,7 @@ class DB_unsave:
         else:
             return False
 
-    def get_by_id(self, id) -> unsave_data:
+    def get_by_id(self, id: int) -> unsave_data:
         """
         Берёт несохранённые данные текстового файла из бд по id
         """

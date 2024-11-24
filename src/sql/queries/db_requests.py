@@ -10,7 +10,7 @@ class DB_requests_history:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def add(self, text) -> requests_history:
+    def add(self, text: str) -> requests_history:
         """
         Добавляет историю переписки с AI в бд
         """
@@ -19,7 +19,7 @@ class DB_requests_history:
         self.session.commit()
         return data
 
-    def get_by_id(self, id) -> requests_history:
+    def get_by_id(self, id: int) -> requests_history:
         """
         Берёт историю переписки с AI из бд по id
         """
@@ -27,7 +27,7 @@ class DB_requests_history:
             requests_history.id == id).one_or_none()
         return data
 
-    def delete_by_id(self, id) -> None:
+    def delete_by_id(self, id: int) -> None:
         """
         Удаляет историю переписки с AI из бд
         """

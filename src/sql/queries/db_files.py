@@ -105,4 +105,4 @@ class DB_recent_files:
             self.session.commit()
             return file
         else:
-            return False
+            return None
