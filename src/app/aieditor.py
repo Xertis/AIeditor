@@ -11,7 +11,6 @@ from src.sql.db_tables import recent_files
 class Aieditor(QMainWindow):
     def __init__(self):
         super(Aieditor, self).__init__()
-        self.toolbar = self.addToolBar("File")
         self.load_ui()
         self.ai = AI()
         self.db = DB()
@@ -28,6 +27,17 @@ class Aieditor(QMainWindow):
         self.refresh_main_text()
         self.refresh_ai_history()
         self.load_connections()
+
+    def load_ui(self):
+        """
+        Этот метод отвечает за загрузку настроек пользовательского
+        интерфейса при старте приложения.
+        """
+        uic.loadUi('main.ui', self)
+        self.toolbar = self.addToolBar("File")
+        self.setWindowTitle("AIeditor")
+        self.ai_history.setReadOnly(True)
+        self.selected_text = ""
 
     def closeEvent(self, event):
         """
@@ -101,16 +111,6 @@ class Aieditor(QMainWindow):
             self.ai_history.setPlainText('')
             self.ai_chat_context.clear()
 
-    def load_ui(self):
-        """
-        Этот метод отвечает за загрузку настроек пользовательского
-        интерфейса при старте приложения.
-        """
-        uic.loadUi('main.ui', self)
-        self.setWindowTitle("AIeditor")
-        self.ai_history.setReadOnly(True)
-        self.selected_text = ""
-
     def ai_analysis(self):
         """
         Метод запускает процесс анализа текста с использованием
@@ -119,23 +119,23 @@ class Aieditor(QMainWindow):
         возвращается и
         отображается в интерфейсе приложения.
         """
-        out = False
+        out = ''
         if self.ai_mode == self.ai.QA:
             if len(self.ai_request.toPlainText()) == 0:
-                return False
+                return ''
             if len(self.main_text.toPlainText()) == 0:
-                return False
+                return ''
 
             out = self.ai.question_answering(
                 self.ai_request.toPlainText(),
                 self.main_text.toPlainText())
         elif self.ai_mode == self.ai.SUMMARING:
             if len(self.selected_text) == 0:
-                return False
+                return ''
 
             if self.ai_request.toPlainText().isnumeric():
                 out = self.ai.summaring(
-                    self.selected_text, 
+                    self.selected_text,
                     int(self.ai_request.toPlainText())
                 )
             else:
